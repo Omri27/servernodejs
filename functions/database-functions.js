@@ -14,26 +14,27 @@ var db = admin.database();
 //public FeedListRequest(String title, String userId, String userName) {
 exports.getHistoryRuns= function(userId,callback){
     var usersRef = db.ref("/users/"+userId+"/comingUpRuns");
-
+    var historyRunRef = db.ref("/users/"+userId+"/historyRuns");
     var historyRuns = [];
     usersRef.once("value").then(function(snapshot) {
         if(snapshot.exists()) {
             snapshot.forEach(function (childSnapshot) {
-                // key will be "ada" the first time and "alan" the second time
                 var key = childSnapshot.key;
-                // childData will be the actual contents of the child
                 var childData = childSnapshot.val();
                 var runsRef = db.ref("/runs/"+key);
                 runsRef.once("value",function(snapshot) {
-                    console.log(snapshot.val());
-                    var jsonContent = JSON.parse(snapshot.val());
-                    childSnapshot.push(
-
-                    )
+                   var run= snapshot.val()
+                    var historyRun =insertToClass(run);
+                   if(!snapshot.hasChild(key))
+                    historyRunRef.child(key).set(historyRun);
                 });
             });
+
         }
     });
 
-
 };
+function insertToClass(run){
+    var historyClass ={date:run.date,time:run.time,creator:run.creator, location:run.location,distance:"",Preferences:run.preferences,maxRunners:"",marked:0,like:0};
+    return historyClass;
+}
