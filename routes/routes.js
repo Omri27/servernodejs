@@ -14,6 +14,14 @@ app.post('/send',function(req,res){
         var userId= req.body.userId;
         //console.log(userId);
         DataBase.getHistoryRuns(userId, function(result){
+           res.json(result);
+        });
+    });
+
+    app.post('/getRecommendedRuns',function(req,res){
+        var userId= req.body.userId;
+        var langlat = req.body.langlat;
+        DataBase.getRecommendedRuns(userId,langlat, function(result){
             res.json(result);
         });
     });

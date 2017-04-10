@@ -11,41 +11,74 @@ admin.initializeApp({
 var db = admin.database();
 
 
-//public FeedListRequest(String title, String userId, String userName) {
+
 exports.getHistoryRuns= function(userId,callback){
     var  nowDate = new Date();
     var usersRef = db.ref("/users/"+userId+"/comingUpRuns");
     var historyRunRef = db.ref("/users/"+userId+"/historyRuns");
-    var historyRuns = [];
-    usersRef.once("value").then(function(snapshot) {
-        if(snapshot.exists()) {
-            snapshot.forEach(function (childSnapshot) {
-                var key = childSnapshot.key;
-                var childData = childSnapshot.val();
-                var runsRef = db.ref("/runs/"+key);
-                runsRef.once("value",function(snapshot) {
-                   var run= snapshot.val()
-                    var historyRun =insertToClass(run);
-                    var oldate= new Date(dateFormat(historyRun.date+ " "+historyRun.time, "dd-mm-yyyy hh:MM"));
-                   if(!snapshot.hasChild(key) && nowDate.getTime()>oldate.getTime())
-                    historyRunRef.child(key).set(historyRun);
-                });
-            });
+    var historyRun =null;
+    var childs =0;
+    var i=0;
+    var historyRuns= [];
+    try {
+      usersRef.once("value").then(function (snapshot) {
 
-        }
-        return callback.success;
-    });
+            if (snapshot.exists()) {
+                childs = snapshot.numChildren();
+                snapshot.forEach(function (childSnapshot) {
+                    var key = childSnapshot.key;
+
+                    //var childData = childSnapshot.val();
+                    var runsRef = db.ref("/runs/" + key);
+                    runsRef.once("value", function (snapshot) {
+                        i++;
+                        var run = snapshot.val()
+                        historyRun = insertToClass(run);
+                       // console.log(historyRun)
+                        var olDate =stringToDateConvert(historyRun)
+                        if (!snapshot.hasChild(key) && nowDate > olDate) {
+                            historyRunRef.child(key).set(historyRun);
+                            historyRuns.push({id:key});
+                        }
+                        if(i==childs){
+                            console.log(historyRuns);
+                            callback(historyRuns);
+                        }
+                    });
+                });
+
+            }
+        });
+    }catch (err){
+        console.log(err.toString());
+    }
+}
+exports.getRecommendedRuns= function(userId,location,callback){
+    console.log(location);
+   // var  nowDate = new Date();
+   // var usersRef = db.ref("/users/"+userId+"/comingUpRuns");
+    //var historyRunRef = db.ref("/users/"+userId+"/historyRuns");
+    var object = [];
+    object.push({id:12});
+    callback(object);
 
 };
 function insertToClass(run){
-    var historyClass ={date:run.date,
+   // console.log(run)
+    var historyClass ={
+        name:run.name,
+        date:run.date,
         time:run.time,
         creator:run.creator,
         location:run.location,
         distance:"",
         Preferences:run.preferences,
         maxRunners:"",
-        marked:0,
-        like:0};
+        marked:false,
+        like:false};
     return historyClass;
+}
+function stringToDateConvert(run){
+    var parts = run.date.split("-");
+    return new Date(parts[1]+"-"+ parts[0]+"-"+ parts[2]+" "+run.time);
 }
