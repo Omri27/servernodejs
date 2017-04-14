@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1f4e4ead-5bea-490a-b66e-d3f943b96d4f" name="Default" comment="get history runs datecomparison">
+    <list default="true" id="1f4e4ead-5bea-490a-b66e-d3f943b96d4f" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functions/database-functions.js" afterPath="$PROJECT_DIR$/functions/database-functions.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/routes.js" afterPath="$PROJECT_DIR$/routes/routes.js" />
@@ -45,8 +45,8 @@
       <file leaf-file-name="routes.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/routes.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="23" column="46" lean-forward="false" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
+            <state relative-caret-position="459">
+              <caret line="27" column="28" lean-forward="false" selection-start-line="27" selection-start-column="15" selection-end-line="27" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -55,10 +55,13 @@
       <file leaf-file-name="database-functions.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/functions/database-functions.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="58" column="28" lean-forward="false" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="28" />
+            <state relative-caret-position="1190">
+              <caret line="174" column="46" lean-forward="false" selection-start-line="174" selection-start-column="46" selection-end-line="174" selection-end-column="46" />
               <folding>
                 <element signature="e#0#41#0" expanded="false" />
+                <element signature="e#426#2522#0" expanded="false" />
+                <element signature="n#!!block;n#averageCal#0" expanded="false" />
+                <element signature="e#3134#4558#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -133,7 +136,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -177,6 +179,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -270,7 +273,8 @@
       <workItem from="1490626389597" duration="599000" />
       <workItem from="1491295225399" duration="8000" />
       <workItem from="1491562964711" duration="16332000" />
-      <workItem from="1491729710083" duration="19512000" />
+      <workItem from="1491729710083" duration="33708000" />
+      <workItem from="1492160934174" duration="10602000" />
     </task>
     <task id="LOCAL-00001" summary="firebase integration + get history runs">
       <created>1491574182798</created>
@@ -293,11 +297,18 @@
       <option name="project" value="LOCAL" />
       <updated>1491589895215</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="smart search">
+      <created>1491823249417</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1491823249417</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41413000" />
+    <option name="totallyTimeSpent" value="66211000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -333,22 +344,59 @@
     <MESSAGE value="firebase integration + get history runs" />
     <MESSAGE value="get history runs +" />
     <MESSAGE value="get history runs datecomparison" />
-    <option name="LAST_COMMIT_MESSAGE" value="get history runs datecomparison" />
+    <MESSAGE value="smart search" />
+    <option name="LAST_COMMIT_MESSAGE" value="smart search" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/functions/database-functions.js</url>
-          <line>14</line>
-          <properties />
+          <line>77</line>
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="2" />
+      <option name="time" value="3" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="6" lean-forward="false" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functions/send-message.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="27" column="28" lean-forward="false" selection-start-line="27" selection-start-column="15" selection-end-line="27" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/functions/database-functions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#41#0" expanded="false" />
+            <element signature="e#426#2522#0" expanded="false" />
+            <element signature="n#!!block;n#averageCal#0" expanded="false" />
+            <element signature="e#3134#4558#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
@@ -371,6 +419,9 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#41#0" expanded="false" />
+            <element signature="e#426#2522#0" expanded="false" />
+            <element signature="n#!!block;n#averageCal#0" expanded="false" />
+            <element signature="e#3134#4558#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -514,14 +565,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/routes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="23" column="46" lean-forward="false" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/functions/send-message.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -530,12 +573,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/routes/routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="27" column="28" lean-forward="false" selection-start-line="27" selection-start-column="15" selection-end-line="27" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/functions/database-functions.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="58" column="28" lean-forward="false" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="28" />
+        <state relative-caret-position="1190">
+          <caret line="174" column="46" lean-forward="false" selection-start-line="174" selection-start-column="46" selection-end-line="174" selection-end-column="46" />
           <folding>
             <element signature="e#0#41#0" expanded="false" />
+            <element signature="e#426#2522#0" expanded="false" />
+            <element signature="n#!!block;n#averageCal#0" expanded="false" />
+            <element signature="e#3134#4558#0" expanded="false" />
           </folding>
         </state>
       </provider>

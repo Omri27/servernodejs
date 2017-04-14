@@ -25,4 +25,10 @@ app.post('/send',function(req,res){
             res.json(result);
         });
     });
+    app.post('/updateAverage',function(req,res){
+        var userId= req.body.userId;
+        DataBase.updateAverage(userId, function(result){
+            res.json(result);
+        });
+    });
 }
