@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1f4e4ead-5bea-490a-b66e-d3f943b96d4f" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functions/database-functions.js" afterPath="$PROJECT_DIR$/functions/database-functions.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/routes.js" afterPath="$PROJECT_DIR$/routes/routes.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -274,7 +272,7 @@
       <workItem from="1491295225399" duration="8000" />
       <workItem from="1491562964711" duration="16332000" />
       <workItem from="1491729710083" duration="33708000" />
-      <workItem from="1492160934174" duration="10602000" />
+      <workItem from="1492160934174" duration="10722000" />
     </task>
     <task id="LOCAL-00001" summary="firebase integration + get history runs">
       <created>1491574182798</created>
@@ -304,15 +302,22 @@
       <option name="project" value="LOCAL" />
       <updated>1491823249417</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="update run &amp; reccommended runs">
+      <created>1492173641940</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1492173641940</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="66211000" />
+    <option name="totallyTimeSpent" value="66331000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19895834" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -345,7 +350,8 @@
     <MESSAGE value="get history runs +" />
     <MESSAGE value="get history runs datecomparison" />
     <MESSAGE value="smart search" />
-    <option name="LAST_COMMIT_MESSAGE" value="smart search" />
+    <MESSAGE value="update run &amp; reccommended runs" />
+    <option name="LAST_COMMIT_MESSAGE" value="update run &amp; reccommended runs" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
