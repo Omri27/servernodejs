@@ -75,10 +75,10 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
                 runsRef.once("value", function (snapshot) {
                     i++;
                     var run = snapshot.val()
-                    var feedRun = insertToClassFeed(run);
-                    var olDate =stringToDateConvert(feedRun)
-                    if (nowDate < olDate) {
-                        feedRun = calculateDistance(feedRun, deviceLongtitude ,deviceLatitude)
+                    var feedRun = insertToClassFeed(userId,run);
+                    var runDate =stringToDateConvert(feedRun)
+                    if (nowDate < runDate) {
+                        feedRun = calculateDistance(feedRun, deviceLongtitude ,deviceLatitude);
                         userFeed.child(key).set(feedRun);
                     }
                     if(i==childs){
@@ -95,12 +95,16 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
 function calculateDistance(run,longtitude,latitude){
     var runLongtitude = run.location.longtitude;
     var runLatitude = run.location.latitude;
-    var result = geoLib.distance({
-        p1: { lat: runLatitude, lon: runLongtitude },
-        p2: { lat: latitude, lon: longtitude }
-    });
-    run.distanceFrom = result.distance;
-    return run;
+    try {
+        var result = geoLib.distance({
+            p1: {lat: runLatitude, lon: runLongtitude},
+            p2: {lat: latitude, lon: longtitude}
+        });
+        run.distanceFrom = result.distance;
+        return run;
+    }catch (err){
+        console.log(err)
+    }
 }
 function averageCal(Preferences) {
     console.log(Preferences[0]);
@@ -123,7 +127,7 @@ function averageCal(Preferences) {
 
 exports.getHistoryRuns= function(userId,callback){
     var  nowDate = new Date();
-    var usersRef = db.ref("/users/"+userId+"/comingUpRuns");
+    var usersUpcomingRunsRef = db.ref("/users/"+userId+"/comingUpRuns");
     var historyRunRef = db.ref("/users/"+userId+"/historyRuns");
     var historyRun =null;
     var childs =0;
@@ -131,31 +135,36 @@ exports.getHistoryRuns= function(userId,callback){
     console.log("asd");
     var historyRuns= [];
     try {
-      usersRef.once("value").then(function (snapshot) {
-
+        usersUpcomingRunsRef.once("value").then(function (snapshot) {
             if (snapshot.exists()) {
                 childs = snapshot.numChildren();
-                snapshot.forEach(function (childSnapshot) {
-                    var key = childSnapshot.key;
-
-                    //var childData = childSnapshot.val();
-                    var runsRef = db.ref("/runs/" + key);
+                if (childs > 0) {
+                    snapshot.forEach(function (childSnapshot) {
+                        var key = childSnapshot.key;
+                        console.log(key)
+                        //var childData = childSnapshot.val();
+                        var runsRef = db.ref("/runs/" + key);
                         runsRef.once("value", function (snapshot) {
-                        i++;
-                        var run = snapshot.val()
-                        historyRun = insertToClass(run);
-                        var olDate =stringToDateConvert(historyRun)
-                        if (!snapshot.hasChild(key) && nowDate > olDate) {
-                            historyRunRef.child(key).set(historyRun);
-                            historyRuns.push({id:key});
-                        }
-                        if(i==childs){
-                            var Response = {isOk : true};
-                            callback(Response);
-                        }
+                            i++;
+                            var run = snapshot.val()
+                            historyRun = insertToClass(run);
+                            var olDate = stringToDateConvert(historyRun)
+                            if (!snapshot.hasChild(key) && nowDate > olDate) {
+                                historyRunRef.child(key).set(historyRun);
+                                historyRuns.push({id: key});
+                            }
+                            if (i == childs) {
+                                var Response = {isOk: true};
+                                console.log(Response);
+                                callback(Response);
+                            }
+                        });
                     });
-                });
 
+                }
+            }else{
+                var Response = {isOk: true};
+                callback(Response);
             }
         });
     }catch (err){
@@ -249,13 +258,12 @@ function getScoreNoRunRecord(userPreferences,newrunPreferences){
 
 }
 function insertToClass(run){
-   // console.log(run)
     var historyClass ={
         name:run.name,
         date:run.date,
         time:run.time,
         creator:run.creator,
-        location:run.location,
+        location:{name: run.location.name, longtitude:run.location.longtitude, latitude:run.location.latitude},
         distance:"",
         Preferences:run.preferences,
         maxRunners:"",
@@ -263,7 +271,18 @@ function insertToClass(run){
         like:false};
     return historyClass;
 }
-function insertToClassFeed(run){
+function insertToClassFeed(userId, run){
+    var sign= false;
+if(run.runners!=undefined){
+var arr= [];
+   for(var key in run.runners) {
+        arr.push(key);
+    }
+    for(var id in arr) {
+        if(id==userId);
+        sign = true;
+    }
+}
 
     var feedRun ={
         name:run.name,
@@ -272,8 +291,10 @@ function insertToClassFeed(run){
         creator:run.creator,
         location:run.location,
         distance:"",
+        sign:sign,
         Preferences:run.preferences,
         maxRunners:"",
+        runners:run.runners!=undefined ? run.runners:null,
         marked:false,
         like:false,
         distanceFrom:0};
