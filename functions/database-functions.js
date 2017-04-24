@@ -1,6 +1,7 @@
 /**
  * Created by Omri on 07/04/2017.
  */
+var  geoLib = require('geo-lib');
 var admin = require("firebase-admin");
 var serviceAccount = require("../chatapp-d3713-firebase-adminsdk-mgk41-56a40c4550.json");
 var dateFormat = require('dateformat');
@@ -57,6 +58,50 @@ exports.updateAverage = function (userId,callback){
         console.log(err.toString());
     }
 }
+
+exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
+    var runs = db.ref("/runs");
+    var  nowDate = new Date();
+    var childs= 0;
+    var i =0;
+    var userFeed = db.ref("/users/"+userId+"/feedRuns");
+    console.log("feed"+ userId);
+    runs.once("value").then(function (snapshot) {
+        if (snapshot.exists()) {
+            childs = snapshot.numChildren();
+            snapshot.forEach(function (childSnapshot) {
+                var key = childSnapshot.key;
+                var runsRef = db.ref("/runs/" + key);
+                runsRef.once("value", function (snapshot) {
+                    i++;
+                    var run = snapshot.val()
+                    var feedRun = insertToClassFeed(run);
+                    var olDate =stringToDateConvert(feedRun)
+                    if (nowDate < olDate) {
+                        feedRun = calculateDistance(feedRun, deviceLongtitude ,deviceLatitude)
+                        userFeed.child(key).set(feedRun);
+                    }
+                    if(i==childs){
+                        var Response = {isOk : true};
+                        callback(Response);
+                    }
+                });
+
+            });
+        }
+    });
+
+}
+function calculateDistance(run,longtitude,latitude){
+    var runLongtitude = run.location.longtitude;
+    var runLatitude = run.location.latitude;
+    var result = geoLib.distance({
+        p1: { lat: runLatitude, lon: runLongtitude },
+        p2: { lat: latitude, lon: longtitude }
+    });
+    run.distanceFrom = result.distance;
+    return run;
+}
 function averageCal(Preferences) {
     console.log(Preferences[0]);
     var numOfQuestions = Preferences[0].length;
@@ -75,6 +120,7 @@ function averageCal(Preferences) {
     return array;
 
 }
+
 exports.getHistoryRuns= function(userId,callback){
     var  nowDate = new Date();
     var usersRef = db.ref("/users/"+userId+"/comingUpRuns");
@@ -82,6 +128,7 @@ exports.getHistoryRuns= function(userId,callback){
     var historyRun =null;
     var childs =0;
     var i=0;
+    console.log("asd");
     var historyRuns= [];
     try {
       usersRef.once("value").then(function (snapshot) {
@@ -215,6 +262,22 @@ function insertToClass(run){
         marked:false,
         like:false};
     return historyClass;
+}
+function insertToClassFeed(run){
+
+    var feedRun ={
+        name:run.name,
+        date:run.date,
+        time:run.time,
+        creator:run.creator,
+        location:run.location,
+        distance:"",
+        Preferences:run.preferences,
+        maxRunners:"",
+        marked:false,
+        like:false,
+        distanceFrom:0};
+    return feedRun;
 }
 function stringToDateConvert(run){
     var parts = run.date.split("-");
