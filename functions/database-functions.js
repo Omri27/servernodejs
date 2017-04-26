@@ -55,7 +55,9 @@ exports.updateAverage = function (userId,callback){
             }
         });
     }catch (err){
+        var Response = {isOk: false,err:err.toString()};
         console.log(err.toString());
+        callback(Response);
     }
 }
 
@@ -64,33 +66,39 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
     var  nowDate = new Date();
     var childs= 0;
     var i =0;
-    var userFeed = db.ref("/users/"+userId+"/feedRuns");
-    console.log("feed"+ userId);
-    runs.once("value").then(function (snapshot) {
-        if (snapshot.exists()) {
-            childs = snapshot.numChildren();
-            snapshot.forEach(function (childSnapshot) {
-                var key = childSnapshot.key;
-                var runsRef = db.ref("/runs/" + key);
-                runsRef.once("value", function (snapshot) {
-                    i++;
-                    var run = snapshot.val()
-                    var feedRun = insertToClassFeed(userId,run);
-                    var runDate =stringToDateConvert(feedRun)
-                    if (nowDate < runDate) {
-                        feedRun = calculateDistance(feedRun, deviceLongtitude ,deviceLatitude);
-                        userFeed.child(key).set(feedRun);
-                    }
-                    if(i==childs){
-                        var Response = {isOk : true};
-                        callback(Response);
-                    }
+    try {
+        var userFeed = db.ref("/users/" + userId + "/feedRuns");
+        console.log("feed" + userId);
+        runs.once("value").then(function (snapshot) {
+            if (snapshot.exists()) {
+                childs = snapshot.numChildren();
+                snapshot.forEach(function (childSnapshot) {
+                    var key = childSnapshot.key;
+                    var runsRef = db.ref("/runs/" + key);
+                    runsRef.once("value", function (snapshot) {
+                        i++;
+                        var run = snapshot.val()
+                        var feedRun = insertToClassFeed(userId, run);
+                        var runDate = stringToDateConvert(feedRun)
+                        if (nowDate < runDate) {
+                            feedRun = calculateDistance(feedRun, deviceLongtitude, deviceLatitude);
+                            userFeed.child(key).set(feedRun);
+                        }
+                        if (i == childs) {
+                            var Response = {isOk: true, err:""};
+                            callback(Response);
+                           // console.log(err.toString());
+                        }
+                    });
+
                 });
-
-            });
-        }
-    });
-
+            }
+        });
+    }catch(err){
+        var Response = {isOk: false,err:err.toString()};
+        console.log(err)
+        callback(Response);
+    }
 }
 function calculateDistance(run,longtitude,latitude){
     var runLongtitude = run.location.longtitude;
@@ -107,27 +115,30 @@ function calculateDistance(run,longtitude,latitude){
     }
 }
 function averageCal(Preferences) {
-    console.log(Preferences[0]);
-    var numOfQuestions = Preferences[0].length;
-    var numOfRuns = Preferences.length;
-    var array = new Array(Preferences[0].length);
-    for (var j = 0; j < numOfQuestions; j++) {
-        array[j]=0;
-        for (var i = 0; i < numOfRuns; i++) {
-            console.log(Preferences[i][j].answer);
-             array[j]+= parseFloat(Preferences[i][j].answer);
+    try {
+        console.log(Preferences[0]);
+        var numOfQuestions = Preferences[0].length;
+        var numOfRuns = Preferences.length;
+        var array = new Array(Preferences[0].length);
+        for (var j = 0; j < numOfQuestions; j++) {
+            array[j] = 0;
+            for (var i = 0; i < numOfRuns; i++) {
+                console.log(Preferences[i][j].answer);
+                array[j] += parseFloat(Preferences[i][j].answer);
+            }
         }
+        for (var j = 0; j < numOfQuestions; j++) {
+            array[j] = array[j] / numOfRuns;
+        }
+        return array;
+    }catch(err){
+        console.log(err);
     }
-    for (var j = 0; j < numOfQuestions; j++) {
-        array[j] =  array[j]/numOfRuns;
-    }
-    return array;
-
 }
 
 exports.getHistoryRuns= function(userId,callback){
     var  nowDate = new Date();
-    var usersUpcomingRunsRef = db.ref("/users/"+userId+"/comingUpRuns");
+    var usersUpcomingRunsRef = db.ref("/users/"+userId+"/feedRuns");
     var historyRunRef = db.ref("/users/"+userId+"/historyRuns");
     var historyRun =null;
     var childs =0;
@@ -142,16 +153,16 @@ exports.getHistoryRuns= function(userId,callback){
                     snapshot.forEach(function (childSnapshot) {
                         var key = childSnapshot.key;
                         console.log(key)
-                        //var childData = childSnapshot.val();
-                        var runsRef = db.ref("/runs/" + key);
-                        runsRef.once("value", function (snapshot) {
+                        var runsRef = db.ref("/users/"+userId+"/feedRuns/" + key);
+                        runsRef.once("value", function (feedRun) {
                             i++;
-                            var run = snapshot.val()
-                            historyRun = insertToClass(run);
+                            var run = feedRun.val();
+                            historyRun= insertToClassFeed(userId,run);
+                           // historyRun = insertToClass(run);
                             var olDate = stringToDateConvert(historyRun)
-                            if (!snapshot.hasChild(key) && nowDate > olDate) {
+                            if (historyRun.sign && nowDate > olDate) {
                                 historyRunRef.child(key).set(historyRun);
-                                historyRuns.push({id: key});
+                                console.log("blabla");
                             }
                             if (i == childs) {
                                 var Response = {isOk: true};
@@ -168,7 +179,9 @@ exports.getHistoryRuns= function(userId,callback){
             }
         });
     }catch (err){
-        console.log(err.toString());
+        var Response = {isOk: false,err:err.toString()};
+        console.log(err)
+        callback(Response);
     }
 }
 exports.getRecommendedRuns= function(userId,location,callback) {
@@ -181,70 +194,76 @@ exports.getRecommendedRuns= function(userId,location,callback) {
     var badScore = 0;
     var response = [];
     var childs = 0;
-    var runsRef = db.ref("/runs");
-     var userDataPreferencesRef = db.ref("/users/" + userId +"/Preferences");
-    var historyRunAverageRef = db.ref("/users/" + userId + "/Average");
-    var numberOfGoodRef = db.ref("/users/" + userId + "/Average/NumberOfGood");
-    var numberOfBadRef = db.ref("/users/" + userId + "/Average/NumberOfBad");
-    var historyGoodRunAverageRef = db.ref("/users/" + userId + "/Average/GoodRuns");
-    var historyBadRunAverageRef = db.ref("/users/" + userId + "/Average/BadRuns");
+    try {
+        var runsRef = db.ref("/runs");
+        var userDataPreferencesRef = db.ref("/users/" + userId + "/Preferences");
+        var historyRunAverageRef = db.ref("/users/" + userId + "/Average");
+        var numberOfGoodRef = db.ref("/users/" + userId + "/Average/NumberOfGood");
+        var numberOfBadRef = db.ref("/users/" + userId + "/Average/NumberOfBad");
+        var historyGoodRunAverageRef = db.ref("/users/" + userId + "/Average/GoodRuns");
+        var historyBadRunAverageRef = db.ref("/users/" + userId + "/Average/BadRuns");
 
-    runsRef.once("value").then(function (runList) {
-        if (runList.val() != null) {
-            childs = runList.numChildren();
-            numberOfGoodRef.once("value").then(function (NumGoodRun) {
-
-
-                if (NumGoodRun.val() != null)
-                    numGoodRun = NumGoodRun.val();
-                numberOfBadRef.once("value").then(function (NumBadRun) {
+        runsRef.once("value").then(function (runList) {
+            if (runList.val() != null) {
+                childs = runList.numChildren();
+                numberOfGoodRef.once("value").then(function (NumGoodRun) {
 
 
-                    if (NumBadRun.val() != null)
-                        numBadRun = NumGoodRun.val();
-                    runList.forEach(function (rawRun) {
-                        if(numBadRun!=0 && numGoodRun!=0){
+                    if (NumGoodRun.val() != null)
+                        numGoodRun = NumGoodRun.val();
+                    numberOfBadRef.once("value").then(function (NumBadRun) {
 
-                        var run = insertToClass(rawRun.val());
-                        var runDate = stringToDateConvert(run);
-                        if (nowDate < runDate) {
-                            historyGoodRunAverageRef.once("value").then(function (historyGoodAverage) {
 
-                                if (historyGoodAverage.val() != null) {
-                                    goodScore = getScore(historyGoodAverage.val(), run.Preferences, true, numGoodRun, numBadRun)
+                        if (NumBadRun.val() != null)
+                            numBadRun = NumGoodRun.val();
+                        runList.forEach(function (rawRun) {
+                            if (numBadRun != 0 && numGoodRun != 0) {
+
+                                var run = insertToClassFeed(userId, rawRun.val());
+                                var runDate = stringToDateConvert(run);
+                                if (nowDate < runDate) {
+                                    historyGoodRunAverageRef.once("value").then(function (historyGoodAverage) {
+
+                                        if (historyGoodAverage.val() != null) {
+                                            goodScore = getScore(historyGoodAverage.val(), run.Preferences, true, numGoodRun, numBadRun)
+                                        }
+                                        // historyBadRunAverageRef.once("value").then(function (historyBadAverage) {
+                                        //
+                                        //         if (historyBadAverage.val() != null) {
+                                        //             badScore = getScore(historyBadAverage.val(), run.Preferences, false, numGoodRun, numBadRun)
+                                        //         }
+                                        // });
+                                    });
+                                    historyBadRunAverageRef.once("value").then(function (historyBadAverage) {
+
+                                        if (historyBadAverage.val() != null) {
+                                            badScore = getScore(historyBadAverage.val(), run.Preferences, false, numGoodRun, numBadRun)
+                                        }
+                                    });
                                 }
-                                // historyBadRunAverageRef.once("value").then(function (historyBadAverage) {
-                                //
-                                //         if (historyBadAverage.val() != null) {
-                                //             badScore = getScore(historyBadAverage.val(), run.Preferences, false, numGoodRun, numBadRun)
-                                //         }
-                                // });
-                            });
-                            historyBadRunAverageRef.once("value").then(function (historyBadAverage) {
-
-                                if (historyBadAverage.val() != null) {
-                                    badScore = getScore(historyBadAverage.val(), run.Preferences, false, numGoodRun, numBadRun)
-                                }
-                            });
-                        }
-                    }else{
-                            userDataPreferencesRef.once("value").then(function(userPreferences){
-                                if(userPreferences.val()!=null){
-                                    noHistoryScore= getScoreNoRunRecord(userPreferences.val(),run.Preferences);
-                                }
-                            });
-                        }
+                            } else {
+                                userDataPreferencesRef.once("value").then(function (userPreferences) {
+                                    if (userPreferences.val() != null) {
+                                        noHistoryScore = getScoreNoRunRecord(userPreferences.val(), run.Preferences);
+                                    }
+                                });
+                            }
+                        });
                     });
+
                 });
 
-            });
 
+            }
+            response.push();
+            callback(response);
+        });
+    }catch(err){
+        var Response = {isOk: false,err:err.toString()};
+        console.log(err)
+        callback(Response);
+    }
 
-
-        }
-        response.push();
-        callback(response);
-    });
 }
 function getScore(averages,newrunPreferences,isGood,goodRuns, badRuns){
 
@@ -265,42 +284,52 @@ function insertToClass(run){
         creator:run.creator,
         location:{name: run.location.name, longtitude:run.location.longtitude, latitude:run.location.latitude},
         distance:"",
-        Preferences:run.preferences,
+        preferences:run.preferences,
         maxRunners:"",
         marked:false,
         like:false};
     return historyClass;
 }
 function insertToClassFeed(userId, run){
-    var sign= false;
-if(run.runners!=undefined){
-var arr= [];
-   for(var key in run.runners) {
-        arr.push(key);
-    }
-    for(var id in arr) {
-        if(id==userId);
-        sign = true;
-    }
-}
+    try {
+        var sign = false;
+        if (run.runners != undefined) {
+            var arr = [];
+            for (var key in run.runners) {
+                arr.push(key);
+            }
+            for (var id in arr) {
+                if (id == userId);
+                sign = true;
+            }
+        }
 
-    var feedRun ={
-        name:run.name,
-        date:run.date,
-        time:run.time,
-        creator:run.creator,
-        location:run.location,
-        distance:"",
-        sign:sign,
-        Preferences:run.preferences,
-        maxRunners:"",
-        runners:run.runners!=undefined ? run.runners:null,
-        marked:false,
-        like:false,
-        distanceFrom:0};
-    return feedRun;
+        var feedRun = {
+            name: run.name,
+            date: run.date,
+            time: run.time,
+            creator: run.creator,
+            location: run.location,
+            distance: "",
+            sign: sign,
+            preferences: run.preferences,
+            maxRunners: "",
+            runners: run.runners != undefined ? run.runners : null,
+            marked: false,
+            like: false,
+            distanceFrom: 0
+        };
+        return feedRun;
+    }catch(err){
+        console.log(err)
+    }
 }
 function stringToDateConvert(run){
-    var parts = run.date.split("-");
-    return new Date(parts[1]+"-"+ parts[0]+"-"+ parts[2]+" "+run.time);
+    try {
+        var parts = run.date.split("-");
+        return new Date(parts[1] + "-" + parts[0] + "-" + parts[2] + " " + run.time);
+    }
+    catch(err){
+        console.log(err)
+    }
 }
