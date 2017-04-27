@@ -87,7 +87,6 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
                         if (i == childs) {
                             var Response = {isOk: true, err:""};
                             callback(Response);
-                           // console.log(err.toString());
                         }
                     });
 
@@ -298,10 +297,12 @@ function insertToClassFeed(userId, run){
             for (var key in run.runners) {
                 arr.push(key);
             }
-            for (var id in arr) {
-                if (id == userId);
-                sign = true;
-            }
+            arr.forEach(function (id)
+            {
+                if (id == userId) {
+                    sign = true;
+                }
+            });
         }
 
         var feedRun = {
