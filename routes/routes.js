@@ -40,14 +40,16 @@ app.post('/send',function(req,res){
 
     app.post('/getRecommendedRuns',function(req,res){
         var userId= req.body.userId;
-        var langlat = req.body.langlat;
-        DataBase.getRecommendedRuns(userId,langlat, function(result){
+        var deviceLongtitude = req.body.langtitude;
+        var deviceLatitude = req.body.latitude;
+        DataBase.getRecommendedRuns(userId,deviceLongtitude,deviceLatitude, function(result){
             res.json(result);
         });
     });
     app.post('/updateAverage',function(req,res){
         var userId= req.body.userId;
-        DataBase.updateAverage(userId, function(result){
+        var runId= req.body.runId;
+        DataBase.updateAverage(userId,runId, function(result){
             res.json(result);
         });
     });
