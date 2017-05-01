@@ -152,7 +152,9 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
     var childs= 0;
     var i =0;
     try {
+        var userPref = db.ref("/users/" + userId + "/preferences");
         var userFeed = db.ref("/users/" + userId + "/feedRuns");
+        userPref.once("value").then(function (userPref){
         console.log("feed" + userId);
         runs.once("value").then(function (snapshot) {
             if (snapshot.exists()) {
@@ -163,10 +165,11 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
                     runsRef.once("value", function (snapshot) {
                         i++;
                         var run = snapshot.val()
-                        var feedRun = insertToClass(false,userId, run);
+                        var feedRun = insertToClass(false,userId, run,key);
                         var runDate = stringToDateConvert(feedRun)
                         if (nowDate < runDate) {
                             feedRun = calculateDistance(feedRun, deviceLongtitude, deviceLatitude);
+                            feedRun = getRunPropertiesMatch(feedRun, userPref.val());
                             userFeed.child(key).set(feedRun);
                         }
                         if (i == childs) {
@@ -177,6 +180,13 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
 
                 });
             }
+            else{
+                userFeed.remove(function() {
+                    var Response = {isOk: true, err: ""};
+                    callback(Response);
+                });
+            }
+        })
         });
     }catch(err){
         var Response = {isOk: false,err:err.toString()};
@@ -193,6 +203,7 @@ function calculateDistance(run,longtitude,latitude){
             p2: {lat: latitude, lon: longtitude}
         });
         run.distanceFrom = result.distance;
+        //console.log( run.distanceFrom)
         return run;
     }catch (err){
         console.log(err)
@@ -241,7 +252,7 @@ exports.getHistoryRuns= function(userId,callback){
                         runsRef.once("value", function (feedRun) {
                             i++;
                             var run = feedRun.val();
-                            historyRun= insertToClass(false,userId,run);
+                            historyRun= insertToClass(false,userId,run,key);
                            // historyRun = insertToClass(run);
                             var olDate = stringToDateConvert(historyRun)
                             if (historyRun.sign && nowDate > olDate) {
@@ -271,7 +282,11 @@ exports.getHistoryRuns= function(userId,callback){
 exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,callback) {
     var runs = db.ref("/runs");
     var userPreferences= db.ref("/users/"+userId+"/preferences");
+    var userDetaills= db.ref("/users/"+userId+"/Details");
+    var userDistanceRadios= db.ref("/users/"+userId+"/radiosDistance");
+    var smartRuns= db.ref("/users/"+userId+"/recommendedRuns");
     var  nowDate = new Date();
+    var runsArray=[];
     var childs= 0;
     var i =0;
     try {
@@ -280,6 +295,9 @@ exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,cal
         console.log("feed" + userId);
         userPreferences.once("value").then(function (userPreferences) {
 
+            userDistanceRadios.once("value").then(function(radius){
+
+                userDetaills.once("value").then(function(details){
 
             runs.once("value").then(function (snapshot) {
                 if (snapshot.exists()) {
@@ -290,21 +308,42 @@ exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,cal
                         runsRef.once("value", function (snapshot) {
                             i++;
                             var run = snapshot.val()
-                            var feedRun = insertToClass(true, userId, run);
+                            var feedRun = insertToClass(true, userId, run,key);
                             var runDate = stringToDateConvert(feedRun)
-                            if (nowDate < runDate) {
-                                feedRun = calculateDistance(feedRun, deviceLongtitude, deviceLatitude);
+                            feedRun = calculateDistance(feedRun, deviceLongtitude, deviceLatitude);
+                            if (nowDate < runDate && radius.val() >= feedRun.distanceFrom ) {
                                 feedRun = getRunPropertiesMatch(feedRun, userPreferences.val());
-                                userFeed.child(key).set(feedRun);
+                                runsArray.push(feedRun);
+
                             }
                             if (i == childs) {
-                                var Response = {isOk: true, err: ""};
-                                callback(Response);
+                                runsArray.sort(function (run1,run2){
+                                    return run2.runPropertyMatch - run1.runPropertyMatch;
+                                });
+
+                                runsArray = calculateScore(details.val(),runsArray);
+                                i=0;
+                                runsArray.forEach(function(run){
+                                    i++;
+                                    smartRuns.child(run.id).set(run);
+                                    if(i==runsArray.length){
+                                        var Response = {isOk: true, err:""};
+                                        callback(Response);
+                                    }
+                                })
                             }
                         });
 
                     });
+                }else{
+                    smartRuns.remove(function(){
+                        var Response = {isOk: true, err:""};
+                        callback(Response);
+                    })
+
                 }
+            });
+                });
             });
         });
     }catch(err){
@@ -314,29 +353,69 @@ exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,cal
     }
 
 }
-function getScore(averages,newrunPreferences,isGood,goodRuns, badRuns){
-
-
-    var logSection = 0;
-        if(isGood){
-
+function calculateScore(userDetails,runs){
+    runs.forEach(function (run){
+        if(run.DetailsAverage!=undefined){
+            var variance =calVariance(userDetails,run.DetailsAverage);
+            //console.log("variance "+ variance)
+            run.smartMatch = calMahal(userDetails,run.DetailsAverage,variance);
+           // console.log(run.smartMatch)
         }
+    });
+   //console.log(runs)
+    return runs;
 }
-
-function getRunPropertiesMatch(Run,userPreferences){
+function calVariance(userDetails,runDetailAverage){
+    var detailsProperty = [];
+    for (var key in userDetails) {
+        detailsProperty.push(key);
+    }
+    var numOfDeatils = detailsProperty.length;
+    var sum=0;
+    for(var i =0; i<numOfDeatils;i++){
+        if(detailsProperty[i]!="birthDate")
+        sum+= Math.pow(userDetails[detailsProperty[i]]- runDetailAverage[detailsProperty[i]], 2);
+        else{
+            var userAge = _calculateAge(stringToDate(userDetails[detailsProperty[i]]))
+            sum+= Math.pow(userAge- runDetailAverage[detailsProperty[i]], 2);
+        }
+    }
+    return sum/numOfDeatils;
+}
+function calMahal(userDetails,runDetailAverage,variance){
+    var detailsProperty = [];
+    for (var key in userDetails) {
+        detailsProperty.push(key);
+    }
+    var numOfDeatils = detailsProperty.length;
+    var sum=0;
+    for(var i =0; i<numOfDeatils;i++) {
+        if (variance > 0) {
+        if (detailsProperty[i] != "birthDate")
+            sum += Math.pow(userDetails[detailsProperty[i]] - runDetailAverage[detailsProperty[i]], 2) / variance;
+        else {
+            var userAge = _calculateAge(stringToDate(userDetails[detailsProperty[i]]))
+            sum += Math.pow(userAge - runDetailAverage[detailsProperty[i]], 2) / variance;
+        }
+    }
+    }
+    return sum;
+}
+function getRunPropertiesMatch(run,userPreferences){
     var numOfQuestions = userPreferences.length;
     var sameAnswer = 0;
     if(userPreferences!=undefined){
-        var runPreferences = Run.preferences
+        var runPreferences = run.preferences
 
         for(var i=0; i<numOfQuestions;i++){
             if(runPreferences[i].answer ==userPreferences[i].answer ){
                 sameAnswer++;
             }
         }
-        Run.runPropertyMatch = sameAnswer/numOfQuestions*100;
+        run.runPropertyMatch = sameAnswer/numOfQuestions*100;
     }
-    return Run;
+   // console.log(run.name+" "+run.runPropertyMatch)
+    return run;
 }
 function getScoreNoRunRecord(userPreferences,newrunPreferences){
 
@@ -355,9 +434,10 @@ function getScoreNoRunRecord(userPreferences,newrunPreferences){
 //         like:false};
 //     return historyClass;
 // }
-function insertToClass(isSmart, userId, run){
+function insertToClass(isSmart, userId, run,runId){
     try {
         var sign = false;
+        var details= null;
         if (run.runners != undefined) {
             var arr = [];
             for (var key in run.runners) {
@@ -370,8 +450,13 @@ function insertToClass(isSmart, userId, run){
                 }
             });
         }
+        if(run.DetailsAverage!= undefined){
+            details = run.DetailsAverage;
+        }
 if(!isSmart) {
     var feedRun = {
+        id:runId,
+        creatorId : run.creatorId,
         name: run.name,
         date: run.date,
         time: run.time,
@@ -384,12 +469,15 @@ if(!isSmart) {
         runners: run.runners != undefined ? run.runners : null,
         //marked: false,
         //like: false,
+        runPropertyMatch:0,
         distanceFrom: 0
     };
     return feedRun;
 }else{
     var smartRun = {
+        id:runId,
         name: run.name,
+        creatorId : run.creatorId,
         date: run.date,
         time: run.time,
         creator: run.creator,
@@ -401,6 +489,7 @@ if(!isSmart) {
         runners: run.runners != undefined ? run.runners : null,
        // marked: false,
         //like: false,
+        DetailsAverage:details,
         distanceFrom: run.distanceFrom,
         runPropertyMatch:0,
         smartMatch:0
