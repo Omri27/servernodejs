@@ -233,7 +233,7 @@ function averageCal(Preferences) {
 
 exports.getHistoryRuns= function(userId,callback){
     var  nowDate = new Date();
-    var usersUpcomingRunsRef = db.ref("/users/"+userId+"/feedRuns");
+    var usersUpcomingRunsRef = db.ref("/users/"+userId+"/comingUpRuns");
     var historyRunRef = db.ref("/users/"+userId+"/historyRuns");
     var historyRun =null;
     var childs =0;
@@ -246,8 +246,9 @@ exports.getHistoryRuns= function(userId,callback){
                 childs = snapshot.numChildren();
                 if (childs > 0) {
                     snapshot.forEach(function (childSnapshot) {
+                        console.log(childSnapshot.val())
                         var key = childSnapshot.key;
-                        console.log(key)
+                        //console.log(key)
                         var runsRef = db.ref("/users/"+userId+"/feedRuns/" + key);
                         runsRef.once("value", function (feedRun) {
                             i++;
@@ -257,11 +258,10 @@ exports.getHistoryRuns= function(userId,callback){
                             var olDate = stringToDateConvert(historyRun)
                             if (historyRun.sign && nowDate > olDate) {
                                 historyRunRef.child(key).set(historyRun);
-                                console.log("blabla");
                             }
                             if (i == childs) {
                                 var Response = {isOk: true};
-                                console.log(Response);
+                               // console.log(Response);
                                 callback(Response);
                             }
                         });
@@ -279,6 +279,41 @@ exports.getHistoryRuns= function(userId,callback){
         callback(Response);
     }
 }
+exports.getComingUpRuns= function(userId,callback) {
+    var runsRef = db.ref("/runs");
+    var childs =0;
+    var  nowDate = new Date();
+    var i =0;
+    var comingUpRuns =  db.ref("/users/"+userId+"/comingUpRuns");
+    runsRef.once("value").then(function (runs) {
+        if (runs.exists()) {
+            childs = runs.numChildren();
+
+            runs.forEach(function (childSnapshot) {
+                var key = childSnapshot.key;
+                runsRef.child(key).once("value").then(function (run){
+                    i++;
+                    var comingUpRun = insertToClass(false, userId, run.val(),key);
+                    var runDate = stringToDateConvert(comingUpRun)
+                    if (nowDate < runDate && comingUpRun.sign== true){
+                        comingUpRuns.child(key).set(comingUpRun,function(){
+
+                        })
+
+                    }
+                    if(i==childs){
+                        var Response = {isOk: true, err:""};
+                        callback(Response);
+                    }
+                });
+            });
+        }else{
+            var Response = {isOk: true, err:""};
+            callback(Response);
+        }
+    });
+
+}
 exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,callback) {
     var runs = db.ref("/runs");
     var userPreferences= db.ref("/users/"+userId+"/preferences");
@@ -292,7 +327,7 @@ exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,cal
     try {
         var userFeed = db.ref("/users/" + userId + "/feedRuns");
 
-        console.log("feed" + userId);
+        console.log(userId);
         userPreferences.once("value").then(function (userPreferences) {
 
             userDistanceRadios.once("value").then(function(radius){
@@ -462,7 +497,7 @@ if(!isSmart) {
         time: run.time,
         creator: run.creator,
         location: run.location,
-        distance: "",
+        distance: run.distance,
         sign: sign,
         preferences: run.preferences,
         maxRunners: "",
@@ -482,7 +517,7 @@ if(!isSmart) {
         time: run.time,
         creator: run.creator,
         location: run.location,
-        distance: "",
+        distance:run.distance,
         sign: sign,
         preferences: run.preferences,
         maxRunners: "",

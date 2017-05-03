@@ -61,4 +61,11 @@ app.post('/send',function(req,res){
             res.json(result);
         });
     });
+
+    app.post('/getComingUpRuns',function(req,res){
+        var userId= req.body.userId;
+        DataBase.getComingUpRuns(userId, function(result){
+            res.json(result);
+        });
+    });
 }
