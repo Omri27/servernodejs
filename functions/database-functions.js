@@ -285,6 +285,7 @@ exports.getComingUpRuns= function(userId,callback) {
     var  nowDate = new Date();
     var i =0;
     var comingUpRuns =  db.ref("/users/"+userId+"/comingUpRuns");
+    comingUpRuns.remove(function(){
     runsRef.once("value").then(function (runs) {
         if (runs.exists()) {
             childs = runs.numChildren();
@@ -294,6 +295,7 @@ exports.getComingUpRuns= function(userId,callback) {
                 runsRef.child(key).once("value").then(function (run){
                     i++;
                     var comingUpRun = insertToClass(false, userId, run.val(),key);
+                    console.log(comingUpRun.sign);
                     var runDate = stringToDateConvert(comingUpRun)
                     if (nowDate < runDate && comingUpRun.sign== true){
                         comingUpRuns.child(key).set(comingUpRun,function(){
@@ -312,7 +314,7 @@ exports.getComingUpRuns= function(userId,callback) {
             callback(Response);
         }
     });
-
+    });
 }
 exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,callback) {
     var runs = db.ref("/runs");
