@@ -10,55 +10,6 @@ admin.initializeApp({
     databaseURL: "https://chatapp-d3713.firebaseio.com"
 });
 var db = admin.database();
-// exports.updateAverage = function (userId,callback){
-//     var historyRunRef = db.ref("/users/"+userId+"/historyRuns");
-//     var HistoryGoodRuns = [];
-//     var HistoryBadRuns = [];
-//     var childs=0;
-//     var i=0;
-//     try {
-//         historyRunRef.once("value").then(function (snapshot) {
-//             if (snapshot.exists()) {
-//                 childs = snapshot.numChildren();
-//                 snapshot.forEach(function (childSnapshot) {
-//
-//                     var key = childSnapshot.key;
-//                     var childData = childSnapshot.val();
-//                     if(childData.marked == true && childData.like == true ) {
-//                         HistoryGoodRuns.push(childData.Preferences);
-//                     }
-//                         if(childData.marked == true && childData.like == false ){
-//                             HistoryBadRuns.push(childData.Preferences);
-//                         }
-//                     i++;
-//                     if(i==childs){
-//                         if(HistoryGoodRuns.length>0) {
-//                             var goodRunsArray = averageCal(HistoryGoodRuns);
-//                             var averageRef = db.ref("/users/" + userId + "/Average/GoodRuns");
-//                             var numberOfGoodRef = db.ref("/users/" + userId + "/Average/NumberOfGood");
-//                             averageRef.push(goodRunsArray);
-//                             numberOfGoodRef.set(HistoryGoodRuns.length);
-//                         }
-//                         if(HistoryBadRuns.length>0) {
-//                             var BadRunsArray = averageCal(HistoryBadRuns);
-//                             averageRef = db.ref("/users/" + userId + "/Average/BadRuns");
-//                             var numberOfBadRunsRef = db.ref("/users/" + userId + "/Average/NumberOfBad");
-//                             averageRef.push(BadRunsArray);
-//                             numberOfBadRunsRef.set(HistoryBadRuns.length);
-//                         }
-//                         var Response = {isOk : true};
-//                         callback(Response);
-//                     }
-//                 });
-//
-//             }
-//         });
-//     }catch (err){
-//         var Response = {isOk: false,err:err.toString()};
-//         console.log(err.toString());
-//         callback(Response);
-//     }
-// }
 exports.updateAverage = function (userId,runId,callback){
 
     var runsRef = db.ref("/runs/"+runId+"/runners");
@@ -154,6 +105,7 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
     try {
         var userPref = db.ref("/users/" + userId + "/preferences");
         var userFeed = db.ref("/users/" + userId + "/feedRuns");
+        userFeed.remove(function(){
         userPref.once("value").then(function (userPref){
         console.log("feed" + userId);
         runs.once("value").then(function (snapshot) {
@@ -165,7 +117,9 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
                     runsRef.once("value", function (snapshot) {
                         i++;
                         var run = snapshot.val()
+                        console.log(run);
                         var feedRun = insertToClass(false,userId, run,key);
+                        console.log(feedRun);
                         var runDate = stringToDateConvert(feedRun)
                         if (nowDate < runDate) {
                             feedRun = calculateDistance(feedRun, deviceLongtitude, deviceLatitude);
@@ -187,6 +141,7 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
                 });
             }
         })
+        });
         });
     }catch(err){
         var Response = {isOk: false,err:err.toString()};
@@ -335,6 +290,8 @@ exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,cal
             userDistanceRadios.once("value").then(function(radius){
 
                 userDetaills.once("value").then(function(details){
+                    smartRuns.remove(function () {
+
 
             runs.once("value").then(function (snapshot) {
                 if (snapshot.exists()) {
@@ -381,6 +338,7 @@ exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,cal
                 }
             });
                 });
+            });
             });
         });
     }catch(err){
@@ -439,6 +397,7 @@ function calMahal(userDetails,runDetailAverage,variance){
     return sum;
 }
 function getRunPropertiesMatch(run,userPreferences){
+
     var numOfQuestions = userPreferences.length;
     var sameAnswer = 0;
     if(userPreferences!=undefined){
@@ -457,20 +416,6 @@ function getRunPropertiesMatch(run,userPreferences){
 function getScoreNoRunRecord(userPreferences,newrunPreferences){
 
 }
-// function insertToClass(run){
-//     var historyClass ={
-//         name:run.name,
-//         date:run.date,
-//         time:run.time,
-//         creator:run.creator,
-//         location:{name: run.location.name, longtitude:run.location.longtitude, latitude:run.location.latitude},
-//         distance:"",
-//         preferences:run.preferences,
-//         maxRunners:"",
-//         marked:false,
-//         like:false};
-//     return historyClass;
-// }
 function insertToClass(isSmart, userId, run,runId){
     try {
         var sign = false;
@@ -504,8 +449,6 @@ if(!isSmart) {
         preferences: run.preferences,
         maxRunners: "",
         runners: run.runners != undefined ? run.runners : null,
-        //marked: false,
-        //like: false,
         runPropertyMatch:0,
         distanceFrom: 0
     };

@@ -54,8 +54,8 @@
       <file leaf-file-name="database-functions.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/functions/database-functions.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="297" column="28" lean-forward="true" selection-start-line="297" selection-start-column="28" selection-end-line="297" selection-end-column="28" />
+            <state relative-caret-position="398">
+              <caret line="110" column="53" lean-forward="true" selection-start-line="110" selection-start-column="53" selection-end-line="110" selection-end-column="53" />
               <folding>
                 <element signature="e#0#41#0" expanded="false" />
                 <element signature="n#!!block;n#averageCal#0" expanded="false" />
@@ -274,7 +274,7 @@
       <workItem from="1491562964711" duration="16332000" />
       <workItem from="1491729710083" duration="33708000" />
       <workItem from="1492160934174" duration="10722000" />
-      <workItem from="1493797650754" duration="5132000" />
+      <workItem from="1493797650754" duration="11482000" />
     </task>
     <task id="LOCAL-00001" summary="firebase integration + get history runs">
       <created>1491574182798</created>
@@ -318,11 +318,18 @@
       <option name="project" value="LOCAL" />
       <updated>1493804963851</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="upcoming runs fix 2">
+      <created>1493805445619</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1493805445619</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71463000" />
+    <option name="totallyTimeSpent" value="77813000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -364,16 +371,11 @@
     <MESSAGE value="smart search" />
     <MESSAGE value="update run &amp; reccommended runs" />
     <MESSAGE value="upcoming runs fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="upcoming runs fix" />
+    <MESSAGE value="upcoming runs fix 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="upcoming runs fix 2" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/functions/database-functions.js</url>
-          <line>77</line>
-        </line-breakpoint>
-      </breakpoints>
       <option name="time" value="3" />
     </breakpoint-manager>
     <watches-manager />
@@ -633,8 +635,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/functions/database-functions.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="297" column="28" lean-forward="true" selection-start-line="297" selection-start-column="28" selection-end-line="297" selection-end-column="28" />
+        <state relative-caret-position="398">
+          <caret line="110" column="53" lean-forward="true" selection-start-line="110" selection-start-column="53" selection-end-line="110" selection-end-column="53" />
           <folding>
             <element signature="e#0#41#0" expanded="false" />
             <element signature="n#!!block;n#averageCal#0" expanded="false" />
