@@ -53,49 +53,59 @@ exports.updateAverage = function (userId,runId,callback){
     }
 }
 function averageCalDetails(details) {
-    var detailsProperty = [];
-    for (var key in details[0]) {
-        detailsProperty.push(key);
+    try {
+        var detailsProperty = [];
+        for (var key in details[0]) {
+            detailsProperty.push(key);
+        }
+        var averageDetails = [];
+        for (var i = 0; i < detailsProperty.length; i++) {
+            averageDetails[i] = 0;
+            details.forEach(function (detail) {
+                if (detailsProperty[i] == 'birthDate') {
+                    var date = stringToDate(detail[detailsProperty[i]])
+
+                    averageDetails[i] += _calculateAge(date);
+                } else {
+                    averageDetails[i] += parseFloat(detail[detailsProperty[i]])
+
+                }
+            })
+
+            averageDetails[i] = parseFloat(averageDetails[i]) / parseFloat(details.length);
+
+        }
+        var jsonDetail = convertToDetailObject();
+        for (var i = 0; i < detailsProperty.length; i++) {
+            jsonDetail[detailsProperty[i]] = averageDetails[i];
+        }
+
+        return jsonDetail;
+    }catch(err){
+        console.log(err.toString())
     }
-    var averageDetails = [];
-    for (var i = 0; i < detailsProperty.length; i++) {
-        averageDetails[i] = 0;
-        details.forEach(function (detail) {
-            if (detailsProperty[i] == 'birthDate') {
-                var date = stringToDate(detail[detailsProperty[i]])
-
-                averageDetails[i] += _calculateAge(date);
-            } else {
-                averageDetails[i] += parseFloat(detail[detailsProperty[i]])
-
-            }
-        })
-
-        averageDetails[i] = parseFloat(averageDetails[i]) / parseFloat(details.length);
-
-    }
-    var jsonDetail = convertToDetailObject();
-    for (var i = 0; i < detailsProperty.length; i++) {
-            jsonDetail[detailsProperty[i]] =averageDetails[i];
-    }
-
-return jsonDetail;
 }
 function convertToDetailObject(){
    var detailObject= {
        birthDate:"",
-       gender:"",
-       generalStatus:"",
-       relationStatus:"",
+       height:"",
+      // gender:"",
+       //generalStatus:"",
+       //relationStatus:"",
        weight:""
+       // distance: ""
    }
    return detailObject;
 }
 function _calculateAge(birthday) { // birthday is a date
-    var ageDifMs = Date.now() - birthday.getTime();
-    var ageDate = new Date(ageDifMs); // miliseconds from epoch
+    try {
+        var ageDifMs = Date.now() - birthday.getTime();
+        var ageDate = new Date(ageDifMs); // miliseconds from epoch
 
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
+    }catch(err){
+        console.log(err.toString());
+    }
 }
 exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
     var runs = db.ref("/runs");
@@ -117,9 +127,8 @@ exports.getFeed = function (userId,deviceLongtitude,deviceLatitude,callback){
                     runsRef.once("value", function (snapshot) {
                         i++;
                         var run = snapshot.val()
-                        console.log(run);
                         var feedRun = insertToClass(false,userId, run,key);
-                        console.log(feedRun);
+
                         var runDate = stringToDateConvert(feedRun)
                         if (nowDate < runDate) {
                             feedRun = calculateDistance(feedRun, deviceLongtitude, deviceLatitude);
@@ -166,7 +175,6 @@ function calculateDistance(run,longtitude,latitude){
 }
 function averageCal(Preferences) {
     try {
-        console.log(Preferences[0]);
         var numOfQuestions = Preferences[0].length;
         var numOfRuns = Preferences.length;
         var array = new Array(Preferences[0].length);
@@ -240,36 +248,41 @@ exports.getComingUpRuns= function(userId,callback) {
     var  nowDate = new Date();
     var i =0;
     var comingUpRuns =  db.ref("/users/"+userId+"/comingUpRuns");
-    comingUpRuns.remove(function(){
-    runsRef.once("value").then(function (runs) {
-        if (runs.exists()) {
-            childs = runs.numChildren();
+    try {
+        comingUpRuns.remove(function () {
+            runsRef.once("value").then(function (runs) {
+                if (runs.exists()) {
+                    childs = runs.numChildren();
 
-            runs.forEach(function (childSnapshot) {
-                var key = childSnapshot.key;
-                runsRef.child(key).once("value").then(function (run){
-                    i++;
-                    var comingUpRun = insertToClass(false, userId, run.val(),key);
-                    console.log(comingUpRun.sign);
-                    var runDate = stringToDateConvert(comingUpRun)
-                    if (nowDate < runDate && comingUpRun.sign== true){
-                        comingUpRuns.child(key).set(comingUpRun,function(){
+                    runs.forEach(function (childSnapshot) {
+                        var key = childSnapshot.key;
+                        runsRef.child(key).once("value").then(function (run) {
+                            i++;
+                            var comingUpRun = insertToClass(false, userId, run.val(), key);
+                            console.log(comingUpRun.sign);
+                            var runDate = stringToDateConvert(comingUpRun)
+                            if (nowDate < runDate && comingUpRun.sign == true) {
+                                comingUpRuns.child(key).set(comingUpRun, function () {
 
-                        })
+                                })
 
-                    }
-                    if(i==childs){
-                        var Response = {isOk: true, err:""};
-                        callback(Response);
-                    }
-                });
+                            }
+                            if (i == childs) {
+                                var Response = {isOk: true, err: ""};
+                                callback(Response);
+                            }
+                        });
+                    });
+                } else {
+                    var Response = {isOk: true, err: ""};
+                    callback(Response);
+                }
             });
-        }else{
-            var Response = {isOk: true, err:""};
-            callback(Response);
-        }
-    });
-    });
+        });
+    }catch(err){
+        var Response = {isOk: false, err: err.toString()};
+        callback(Response);
+    }
 }
 exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,callback) {
     var runs = db.ref("/runs");
@@ -361,57 +374,71 @@ function calculateScore(userDetails,runs){
     return runs;
 }
 function calVariance(userDetails,runDetailAverage){
-    var detailsProperty = [];
-    for (var key in userDetails) {
-        detailsProperty.push(key);
-    }
-    var numOfDeatils = detailsProperty.length;
-    var sum=0;
-    for(var i =0; i<numOfDeatils;i++){
-        if(detailsProperty[i]!="birthDate")
-        sum+= Math.pow(userDetails[detailsProperty[i]]- runDetailAverage[detailsProperty[i]], 2);
-        else{
-            var userAge = _calculateAge(stringToDate(userDetails[detailsProperty[i]]))
-            sum+= Math.pow(userAge- runDetailAverage[detailsProperty[i]], 2);
+    try {
+        var detailsProperty = [];
+        for (var key in userDetails) {
+            detailsProperty.push(key);
         }
+        var numOfDeatils = detailsProperty.length;
+        var sum = 0;
+        for (var i = 0; i < numOfDeatils; i++) {
+            if (detailsProperty[i] != "birthDate")
+                sum += Math.pow(userDetails[detailsProperty[i]] - runDetailAverage[detailsProperty[i]], 2);
+            else {
+                var userAge = _calculateAge(stringToDate(userDetails[detailsProperty[i]]))
+                sum += Math.pow(userAge - runDetailAverage[detailsProperty[i]], 2);
+            }
+        }
+        console.log(sum / numOfDeatils)
+        return sum / numOfDeatils;
+    }catch(err){
+        console.log(err.toString());
     }
-    return sum/numOfDeatils;
 }
 function calMahal(userDetails,runDetailAverage,variance){
-    var detailsProperty = [];
-    for (var key in userDetails) {
-        detailsProperty.push(key);
-    }
-    var numOfDeatils = detailsProperty.length;
-    var sum=0;
-    for(var i =0; i<numOfDeatils;i++) {
-        if (variance > 0) {
-        if (detailsProperty[i] != "birthDate")
-            sum += Math.pow(userDetails[detailsProperty[i]] - runDetailAverage[detailsProperty[i]], 2) / variance;
-        else {
-            var userAge = _calculateAge(stringToDate(userDetails[detailsProperty[i]]))
-            sum += Math.pow(userAge - runDetailAverage[detailsProperty[i]], 2) / variance;
+    try {
+        var detailsProperty = [];
+        for (var key in userDetails) {
+            detailsProperty.push(key);
         }
+        var numOfDeatils = detailsProperty.length;
+        var sum = 0;
+        for (var i = 0; i < numOfDeatils; i++) {
+            if (variance > 0) {
+                if (detailsProperty[i] != "birthDate") {
+                    sum += Math.pow((userDetails[detailsProperty[i]] - runDetailAverage[detailsProperty[i]])/ variance, 2);
+                } else {
+                    var userAge = _calculateAge(stringToDate(userDetails[detailsProperty[i]]))
+                    sum += Math.pow((userAge - runDetailAverage[detailsProperty[i]])/ variance, 2) ;
+                }
+            }
+        }
+
+        sum = Math.sqrt(sum);
+        return sum;
+    }catch(err){
+        console.log(err.toString());
     }
-    }
-    return sum;
 }
 function getRunPropertiesMatch(run,userPreferences){
-
+try {
     var numOfQuestions = userPreferences.length;
     var sameAnswer = 0;
-    if(userPreferences!=undefined){
+    if (userPreferences != undefined) {
         var runPreferences = run.preferences
 
-        for(var i=0; i<numOfQuestions;i++){
-            if(runPreferences[i].answer ==userPreferences[i].answer ){
+        for (var i = 0; i < numOfQuestions; i++) {
+            if (runPreferences[i].answer == userPreferences[i].answer) {
                 sameAnswer++;
             }
         }
-        run.runPropertyMatch = sameAnswer/numOfQuestions*100;
+        run.runPropertyMatch = sameAnswer / numOfQuestions * 100;
     }
-   // console.log(run.name+" "+run.runPropertyMatch)
+    // console.log(run.name+" "+run.runPropertyMatch)
     return run;
+}catch(err){
+    console.log(err.toString());
+}
 }
 function getScoreNoRunRecord(userPreferences,newrunPreferences){
 
