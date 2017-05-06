@@ -196,7 +196,8 @@ function averageCal(Preferences) {
 
 exports.getHistoryRuns= function(userId,callback){
     var  nowDate = new Date();
-    var usersUpcomingRunsRef = db.ref("/users/"+userId+"/comingUpRuns");
+    var userPref = db.ref("/users/" + userId + "/preferences");
+    var usersUpcomingRunsRef = db.ref("/users/"+userId+"/comingUpRunsIds");
     var historyRunRef = db.ref("/users/"+userId+"/historyRuns");
     var historyRun =null;
     var childs =0;
@@ -204,15 +205,19 @@ exports.getHistoryRuns= function(userId,callback){
     console.log("asd");
     var historyRuns= [];
     try {
+        historyRunRef.remove(function(){
+        userPref.once("value").then(function(preferences){
         usersUpcomingRunsRef.once("value").then(function (snapshot) {
+
             if (snapshot.exists()) {
                 childs = snapshot.numChildren();
                 if (childs > 0) {
                     snapshot.forEach(function (childSnapshot) {
                         console.log(childSnapshot.val())
                         var key = childSnapshot.key;
-                        //console.log(key)
-                        var runsRef = db.ref("/users/"+userId+"/feedRuns/" + key);
+                        console.log(key)
+                        // var runsRef = db.ref("/users/"+userId+"/feedRuns/" + key);
+                        var runsRef = db.ref("runs/"+ key);
                         runsRef.once("value", function (feedRun) {
                             i++;
                             var run = feedRun.val();
@@ -220,6 +225,7 @@ exports.getHistoryRuns= function(userId,callback){
                            // historyRun = insertToClass(run);
                             var olDate = stringToDateConvert(historyRun)
                             if (historyRun.sign && nowDate > olDate) {
+                                historyRun = getRunPropertiesMatch(historyRun,preferences.val())
                                 historyRunRef.child(key).set(historyRun);
                             }
                             if (i == childs) {
@@ -236,6 +242,8 @@ exports.getHistoryRuns= function(userId,callback){
                 callback(Response);
             }
         });
+        });
+        });
     }catch (err){
         var Response = {isOk: false,err:err.toString()};
         console.log(err)
@@ -244,12 +252,15 @@ exports.getHistoryRuns= function(userId,callback){
 }
 exports.getComingUpRuns= function(userId,callback) {
     var runsRef = db.ref("/runs");
+    var userPreferences= db.ref("/users/"+userId+"/preferences");
     var childs =0;
     var  nowDate = new Date();
     var i =0;
     var comingUpRuns =  db.ref("/users/"+userId+"/comingUpRuns");
     try {
+
         comingUpRuns.remove(function () {
+            userPreferences.once("value").then(function(preferences){
             runsRef.once("value").then(function (runs) {
                 if (runs.exists()) {
                     childs = runs.numChildren();
@@ -259,9 +270,9 @@ exports.getComingUpRuns= function(userId,callback) {
                         runsRef.child(key).once("value").then(function (run) {
                             i++;
                             var comingUpRun = insertToClass(false, userId, run.val(), key);
-                            console.log(comingUpRun.sign);
                             var runDate = stringToDateConvert(comingUpRun)
                             if (nowDate < runDate && comingUpRun.sign == true) {
+                                comingUpRun = getRunPropertiesMatch(comingUpRun,preferences.val());
                                 comingUpRuns.child(key).set(comingUpRun, function () {
 
                                 })
@@ -278,6 +289,7 @@ exports.getComingUpRuns= function(userId,callback) {
                     callback(Response);
                 }
             });
+        });
         });
     }catch(err){
         var Response = {isOk: false, err: err.toString()};
