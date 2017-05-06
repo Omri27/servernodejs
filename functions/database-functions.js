@@ -209,9 +209,9 @@ exports.getHistoryRuns= function(userId,callback){
         userPref.once("value").then(function(preferences){
         usersUpcomingRunsRef.once("value").then(function (snapshot) {
 
-            if (snapshot.exists()) {
+            //if (snapshot.exists()) {
                 childs = snapshot.numChildren();
-                if (childs > 0) {
+                 if (childs > 0) {
                     snapshot.forEach(function (childSnapshot) {
                         console.log(childSnapshot.val())
                         var key = childSnapshot.key;
@@ -224,7 +224,7 @@ exports.getHistoryRuns= function(userId,callback){
                             historyRun= insertToClass(false,userId,run,key);
                            // historyRun = insertToClass(run);
                             var olDate = stringToDateConvert(historyRun)
-                            if (historyRun.sign && nowDate > olDate) {
+                            if (nowDate > olDate &&( historyRun.sign || historyRun.creatorId == userId )) {
                                 historyRun = getRunPropertiesMatch(historyRun,preferences.val())
                                 historyRunRef.child(key).set(historyRun);
                             }
@@ -236,7 +236,7 @@ exports.getHistoryRuns= function(userId,callback){
                         });
                     });
 
-                }
+              //  }
             }else{
                 var Response = {isOk: true};
                 callback(Response);
@@ -271,7 +271,7 @@ exports.getComingUpRuns= function(userId,callback) {
                             i++;
                             var comingUpRun = insertToClass(false, userId, run.val(), key);
                             var runDate = stringToDateConvert(comingUpRun)
-                            if (nowDate < runDate && comingUpRun.sign == true) {
+                            if (nowDate < runDate && (comingUpRun.sign == true || comingUpRun.creatorId == userId)) {
                                 comingUpRun = getRunPropertiesMatch(comingUpRun,preferences.val());
                                 comingUpRuns.child(key).set(comingUpRun, function () {
 
