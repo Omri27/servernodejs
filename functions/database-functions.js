@@ -11,7 +11,6 @@ admin.initializeApp({
 });
 var db = admin.database();
 exports.updateAverage = function (userId,runId,callback){
-
     var runsRef = db.ref("/runs/"+runId+"/runners");
     var runAverageDetails = db.ref("/runs/"+runId);
     var idsArr = [];
@@ -20,30 +19,35 @@ exports.updateAverage = function (userId,runId,callback){
     var reads = [];
     var i=0;
     try {
-        console.log("");
         runsRef.once("value").then(function (snapshot) {
             childs = snapshot.numChildren();
-            snapshot.forEach(function (userId) {
-                var usersRef = db.ref("/users/" + userId.key + "/Details");
-                usersRef.once("value").then(function (userDetails) {
-                    i++;
-                    if (userDetails.val()!=null) {
-                        details.push(userDetails.val())
-                    }
-                     if(i==childs){
-                        if(details.length>0) {
-                            var averageDetails = averageCalDetails(details);
-                            runAverageDetails.child("DetailsAverage").set(averageDetails, function(){
-                                var Response = {isOk: true, err: ""};
-                                callback(Response);
-                            });
+            if (childs > 0){
+                snapshot.forEach(function (userId) {
+                    var usersRef = db.ref("/users/" + userId.key + "/Details");
+                    usersRef.once("value").then(function (userDetails) {
+                        i++;
+                        if (userDetails.val() != null) {
+                            details.push(userDetails.val())
                         }
-                    }
+                        if (i == childs) {
+                            if (details.length > 0) {
+                                var averageDetails = averageCalDetails(details);
+                                runAverageDetails.child("DetailsAverage").set(averageDetails, function () {
+                                    var Response = {isOk: true, err: ""};
+                                    callback(Response);
+                                });
+                            }
+                        }
+
+                    });
 
                 });
-
-            });
-
+        }else{
+                runAverageDetails.child("DetailsAverage").remove(function(){
+                    var Response = {isOk: true, err: ""};
+                    callback(Response);
+                })
+            }
         });
 
     }catch (err){
@@ -376,7 +380,8 @@ exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,cal
 function calculateScore(userDetails,runs){
     runs.forEach(function (run){
         if(run.DetailsAverage!=undefined){
-            var variance =calVariance(userDetails,run.DetailsAverage);
+           // var variance =calVariance(userDetails,run.DetailsAverage);
+            var variance =2;
             //console.log("variance "+ variance)
             run.smartMatch = calMahal(userDetails,run.DetailsAverage,variance);
            // console.log(run.smartMatch)
