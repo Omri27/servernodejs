@@ -383,7 +383,7 @@ function calculateScore(userDetails,runs){
            // var variance =calVariance(userDetails,run.DetailsAverage);
             var variance =2;
             //console.log("variance "+ variance)
-            run.smartMatch = calMahal(userDetails,run.DetailsAverage,variance);
+            run.smartMatch = calMahal(userDetails,run.DetailsAverage,variance)*0.4 +0.6*(100-run.runPropertyMatch);
            // console.log(run.smartMatch)
         }
     });

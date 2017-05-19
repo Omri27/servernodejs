@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1f4e4ead-5bea-490a-b66e-d3f943b96d4f" name="Default" comment="history">
+    <list default="true" id="1f4e4ead-5bea-490a-b66e-d3f943b96d4f" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/functions/database-functions.js" afterPath="$PROJECT_DIR$/functions/database-functions.js" />
     </list>
@@ -31,21 +31,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="routes.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="routes.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/routes.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="39" column="0" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+            <state relative-caret-position="328">
+              <caret line="55" column="42" lean-forward="false" selection-start-line="55" selection-start-column="42" selection-end-line="55" selection-end-column="42" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="database-functions.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="database-functions.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/functions/database-functions.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="20" column="9" lean-forward="false" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
+            <state relative-caret-position="421">
+              <caret line="380" column="32" lean-forward="true" selection-start-line="380" selection-start-column="32" selection-end-line="380" selection-end-column="32" />
               <folding>
                 <element signature="e#0#41#0" expanded="false" />
               </folding>
@@ -88,8 +88,8 @@
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/functions/DataBase-Functions.js" />
         <option value="$PROJECT_DIR$/functions/dataBase-functions.js" />
-        <option value="$PROJECT_DIR$/functions/database-functions.js" />
         <option value="$PROJECT_DIR$/routes/routes.js" />
+        <option value="$PROJECT_DIR$/functions/database-functions.js" />
       </list>
     </option>
   </component>
@@ -105,10 +105,10 @@
     <handled-path value="$PROJECT_DIR$/node_modules" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
+    <option name="x" value="-7" />
+    <option name="y" value="2" />
+    <option name="width" value="1932" />
+    <option name="height" value="1045" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -126,6 +126,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -168,14 +170,12 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="nodejs_interpreter_path" value="C:/Program Files/nodejs/node" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$USER_HOME$/WebstormProjects/FindMeARunWebsite" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="js.eslint.eslintPackage" value="" />
     <property name="SearchEverywhereHistoryKey" value="ter&#9;ACTION&#9;ActivateTerminalToolWindow&#10;termi&#9;ACTION&#9;ActivateTerminalToolWindow" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
@@ -276,7 +276,8 @@
       <workItem from="1494142357799" duration="4338000" />
       <workItem from="1494241184875" duration="2205000" />
       <workItem from="1494327962246" duration="2528000" />
-      <workItem from="1494837969987" duration="4852000" />
+      <workItem from="1494837969987" duration="5471000" />
+      <workItem from="1495187131178" duration="4300000" />
     </task>
     <task id="LOCAL-00001" summary="firebase integration + get history runs">
       <created>1491574182798</created>
@@ -355,14 +356,21 @@
       <option name="project" value="LOCAL" />
       <updated>1494090204806</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="update average fix">
+      <created>1494936003604</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1494936003604</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="119121000" />
+    <option name="totallyTimeSpent" value="124040000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-7" y="2" width="1932" height="1045" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -372,8 +380,8 @@
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Execute Anonymous" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1971831" sideWeight="0.49791014" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25184405" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1995614" sideWeight="0.49791014" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25237593" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -406,7 +414,8 @@
     <MESSAGE value="details" />
     <MESSAGE value="history &amp; coming" />
     <MESSAGE value="history" />
-    <option name="LAST_COMMIT_MESSAGE" value="history" />
+    <MESSAGE value="update average fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="update average fix" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -437,7 +446,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -471,7 +479,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -505,7 +512,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -539,7 +545,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -573,7 +578,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -607,7 +611,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -641,7 +644,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="3" column="22" lean-forward="true" selection-start-line="3" selection-start-column="22" selection-end-line="3" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -675,7 +677,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="29" lean-forward="false" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -706,7 +707,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="29" lean-forward="false" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -737,7 +737,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="44">
           <caret line="2" column="29" lean-forward="true" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -785,14 +784,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="6" lean-forward="false" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/EcmaScript.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="182">
@@ -804,25 +795,32 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="6" lean-forward="false" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="328">
+          <caret line="55" column="42" lean-forward="false" selection-start-line="55" selection-start-column="42" selection-end-line="55" selection-end-column="42" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/functions/database-functions.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="20" column="9" lean-forward="false" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
+        <state relative-caret-position="421">
+          <caret line="380" column="32" lean-forward="true" selection-start-line="380" selection-start-column="32" selection-end-line="380" selection-end-column="32" />
           <folding>
             <element signature="e#0#41#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/routes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="39" column="0" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
