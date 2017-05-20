@@ -223,21 +223,25 @@ exports.getHistoryRuns= function(userId,callback){
                         // var runsRef = db.ref("/users/"+userId+"/feedRuns/" + key);
                         var runsRef = db.ref("runs/"+ key);
                         runsRef.once("value", function (feedRun) {
+
                             i++;
                             var run = feedRun.val();
-                            historyRun= insertToClass(false,userId,run,key);
-                           // historyRun = insertToClass(run);
-                            var olDate = stringToDateConvert(historyRun)
-                            if (nowDate > olDate &&( historyRun.sign || historyRun.creatorId == userId )) {
-                                historyRun = getRunPropertiesMatch(historyRun,preferences.val())
-                                historyRunRef.child(key).set(historyRun);
-                            }
-                            if (i == childs) {
-                                var Response = {isOk: true};
-                               // console.log(Response);
-                                callback(Response);
+                            if(run!=null) {
+                                historyRun = insertToClass(false, userId, run, key);
+                                // historyRun = insertToClass(run);
+                                var olDate = stringToDateConvert(historyRun)
+                                if (nowDate > olDate && ( historyRun.sign || historyRun.creatorId == userId )) {
+                                    historyRun = getRunPropertiesMatch(historyRun, preferences.val())
+                                    historyRunRef.child(key).set(historyRun);
+                                }
+                                if (i == childs) {
+                                    var Response = {isOk: true};
+                                    // console.log(Response);
+                                    callback(Response);
+                                }
                             }
                         });
+
                     });
 
               //  }
