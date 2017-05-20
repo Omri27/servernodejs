@@ -4,7 +4,6 @@
 var  geoLib = require('geo-lib');
 var admin = require("firebase-admin");
 var serviceAccount = require("../chatapp-d3713-firebase-adminsdk-mgk41-56a40c4550.json");
-var dateFormat = require('dateformat');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://chatapp-d3713.firebaseio.com"
