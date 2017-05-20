@@ -234,12 +234,13 @@ exports.getHistoryRuns= function(userId,callback){
                                     historyRun = getRunPropertiesMatch(historyRun, preferences.val())
                                     historyRunRef.child(key).set(historyRun);
                                 }
+                            }
+
                                 if (i == childs) {
                                     var Response = {isOk: true};
                                     // console.log(Response);
                                     callback(Response);
                                 }
-                            }
                         });
 
                     });
