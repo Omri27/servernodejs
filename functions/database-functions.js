@@ -314,6 +314,7 @@ exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,cal
     var runsArray=[];
     var childs= 0;
     var i =0;
+    var j =0;
     try {
         var userFeed = db.ref("/users/" + userId + "/feedRuns");
 
@@ -345,19 +346,25 @@ exports.getRecommendedRuns= function(userId,deviceLongtitude, deviceLatitude,cal
                             }
                             if (i == childs) {
                                 runsArray.sort(function (run1,run2){
+
                                     return run2.runPropertyMatch - run1.runPropertyMatch;
                                 });
-
+                                console.log(runsArray.length)
                                 runsArray = calculateScore(details.val(),runsArray);
-                                i=0;
-                                runsArray.forEach(function(run){
-                                    i++;
-                                    smartRuns.child(run.id).set(run);
-                                    if(i==runsArray.length){
-                                        var Response = {isOk: true, err:""};
-                                        callback(Response);
-                                    }
-                                })
+                                if(runsArray.length>0) {
+                                    runsArray.forEach(function (run) {
+                                        j++;
+                                        smartRuns.child(run.id).set(run);
+                                        if (j == runsArray.length) {
+                                            var Response = {isOk: true, err: ""};
+                                            callback(Response);
+                                        }
+                                    })
+                                }
+                                else{
+                                    var Response = {isOk: true, err: ""};
+                                    callback(Response);
+                                }
                             }
                         });
 
